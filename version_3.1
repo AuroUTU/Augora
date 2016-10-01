@@ -1,0 +1,87 @@
+import requests
+#import re
+
+r_au=requests.get("http://www.aurora-service.eu/aurora-forecast/")
+aurora= r_au.text.split("\n")
+# Hourly forecast
+print "Right now, the aurora is predicted to be:",aurora[245][1802:1810]
+print "In 0 hour and",aurora[245][1903:1905],"minutes, the aurora is predicted to be",aurora[245][1982:1989]
+print "In 0 hour and",aurora[245][2047:2049],"minutes, the aurora is predicted to be",aurora[245][2126:2133]
+print "In 0 hour and",aurora[245][2191:2193],"minutes, the aurora is predicted to be",aurora[245][2270:2277]
+print "Turku is located around kp 5.00"
+print
+# Bz prediction
+r_Bz=requests.get("http://www.aurora-service.eu/rtswtb.php")
+aurora_Bz = r_Bz.text.split("\n")
+print "Bz value now is:", aurora_Bz[73][aurora_Bz[73].index("bf2")+7:aurora_Bz[73].index("</td>")-3]+"nt","[Bz value<-5nt is better]"
+print
+# local time
+r_we=requests.get("http://www.bbc.com/weather/633679")
+weather= r_we.text.split("\n")
+# Adivertisement changes may effect the index
+for line in weather[1120:1175]:
+    if ">Time<" in line:
+        a = weather.index(line)
+        break
+for line in weather[1150:1199]:
+    if ">Weather Conditions<" in line:
+        b = weather.index(line)
+        break
+if int(aurora[245][aurora[245].index("Time) is: ")+10:aurora[245].index("</p><pre")-12])+2 > 23:     # summer time and winter time
+    print "Helsinki Time now is: ",int(aurora[245][aurora[245].index("Time) is: ")+10:aurora[245].index("</p><pre")-12])-24,aurora[245][4377:4380],"(UTC+3)"
+else:
+    print "Helsinki Time now is: ",int(aurora[245][aurora[245].index("Time) is: ")+10:aurora[245].index("</p><pre")-12])+3,aurora[245][4377:4380],"(UTC+3)"
+# Weather condition 
+print "Helsinki Time",weather[a+1][weather[a+1].index("span")+18:weather[a+1].index("</span")],":00",",Turku sky is:",weather[b+3][weather[b+3].index("alt=")+5:weather[b+3].index("title=")-2]
+print "Helsinki Time",weather[a+4][weather[a+4].index("span")+18:weather[a+4].index("</span")],":00",",Turku sky is:",weather[b+6][weather[b+6].index("alt=")+5:weather[b+6].index("title=")-2]
+# Sunrise and sunset time
+for line in weather[1120:1150]:
+    if ">Sunrise" in line:
+        c = weather.index(line)
+        break
+print "Turku",weather[c][46:59],",Turku",weather[c+1][49:61]
+print
+# Daily forecast
+print "Do you want to get Daily Aurora forecast? (Predicted by a experienced person)"
+print "To some reasons, it un-updates for a long time"
+answer_DF = raw_input("Please input Y/N: ")
+print 
+if answer_DF == "Y":
+    print "Daily forecast:"
+    print aurora[245][aurora[245].index("</a><p>Tonight&#")-15:aurora[245].index("</a><p>Tonight&#")],"    ",aurora[245][aurora[245].index("<br /> Level ")+7:aurora[245].index("<br /> Level ")+14],":",aurora[245][aurora[245].index("Forecast:<br />")-11:aurora[245].index("Forecast:<br />")-7]
+    print aurora[245][aurora[245].index("Forecast:<br />")+16:aurora[245].index("</p></li></ul><hr class=")]
+    print 
+else:
+    print 
+# Three days forecast
+print "Do you want to get 3 days Aurora forecast?"
+answer_TD = raw_input("Please input Y/N: ")
+print 
+if answer_TD == "Y":
+    print "Predicted kp numbers for the next 3 days:"
+    print  "            ",aurora[245][aurora[245].index("<strong>            ")+20:]
+    for i in range(246,254):
+        print aurora[i][7:]
+    print "UTC is Universal Time"
+    print aurora[245][aurora[245].index("</strong><br />")+15:aurora[245].index("</p><pre")]
+    print 
+else:
+    print
+# Tips
+print "Before you totally lost, do you want to know some tips of aurora forecast?"
+answer_tip = raw_input("Please input Y/N: ")
+print 
+if answer_tip == "Y":
+    print "This is some tips based on my own knowledge and experience"
+    print "Kp value means how far aurora can go, the larger value, the lower latitude regi-ons aurora can reach, Turku is located around kp 5.00"
+    print "Bz value means how close aurora towards to land, the lower value, the closer di-stance aurora towards to land, Bz value<-5nt is better"
+    print "Actually, no matter which values, those are just references, the real world does not totally based on data"
+    print 
+else:
+    print
+print "Thanks to www.aurora-service.eu/aurora-forecast/ for aurora forecast!"
+print "And thanks to www.bbc.com/weather/ for weather forecast!"
+print "Hopefully you are lucky to see!"
+print 
+q = raw_input("Press Enter to quit, thanks for using! WANG Ning")
+
